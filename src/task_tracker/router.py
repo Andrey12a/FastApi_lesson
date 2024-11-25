@@ -4,6 +4,7 @@ from src.task_tracker.schemas import CreateTaskSchema, CreateCommentSchema
 from src.task_tracker.service import TaskService, CommentService # в роуты уже тянем сервис с выполнением его
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.orm.database import get_async_session
+from src.task_tracker.repositories.task_repository import TaskRepository
 from src.task_tracker.schemas import ResponseTaskSchema, ResponseCommentSchema, UpdateTaskSchema
 
 router = APIRouter(
@@ -52,7 +53,23 @@ async def update_task_handler(
     task_service = TaskService(session=session)
     return await task_service.update(task=task, task_id=task_id)
 
-
+@router.patch(
+    '/{task_id}',
+    description='update t',
+    status_code=200
+)
+async def update_task_handler(
+        task: UpdateTaskSchema,
+        task_id: int,
+        session: AsyncSession = Depends(get_async_session)
+):
+    # task_service = TaskService(session=session)
+    repo = TaskRepository(session)
+    tasks = repo.get_task_id(task_id)
+    tasks.title = task.title
+    tasks.description = task.description
+    tasks.status = task.status
+    return await repo.update_task(task_data=task)
 
 # @router.get(
 #     '',

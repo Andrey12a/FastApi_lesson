@@ -32,6 +32,9 @@ class TaskService():
     async def update(self, task_id: int, task: UpdateTaskSchema):
         return await self.repository.update_by_id(task_data=task, task_id=task_id)
 
+    async def update_t(self, task: UpdateTaskSchema):
+        return await self.repository.update_task(task_data=task)
+
     async def delete(self, task_id: int) -> Tasks | None:
         return await self.repository.delete_by_id(task_id=task_id)
 

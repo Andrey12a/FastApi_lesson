@@ -62,6 +62,18 @@ class TaskRepository():
         await self.session.refresh(task)
         return task
 
+    async def get_task_id(self, task_id: int):
+        query = select(Tasks).where(Tasks.id == task_id)
+        result = await self.session.execute(query)
+        task = result.scalar_one_or_none()
+        return task
+
+    async def update_task(self, task_data: UpdateTaskSchema):
+        await self.session.merge(task_data)
+        await self.session.commit()
+        await self.session.refresh(task_data)
+        return task_data
+
     async def delete_by_id(self, task_id: int) -> Tasks:
         query = select(Tasks).where(Tasks.id == task_id)
         result = await self.session.execute(query)
